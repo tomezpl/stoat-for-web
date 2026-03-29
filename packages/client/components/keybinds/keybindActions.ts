@@ -60,12 +60,19 @@ export enum KeybindAction {
    * Close the open and ephemeral sidebar
    */
   CLOSE_SIDEBAR = "close_sidebar",
+
+  /**
+   * Toggle the microphone muted state
+   */
+  VOICE_MICROPHONE_MUTE_TOGGLE = "voice_mic_mute",
 }
 
 /**
  * Priority of actions relative to each other
  */
 export const ACTION_PRIORITY: KeybindAction[] = [
+  KeybindAction.VOICE_MICROPHONE_MUTE_TOGGLE,
+
   // 'Escape' bindings
   KeybindAction.CLOSE_FLOATING,
   KeybindAction.CLOSE_MODAL,

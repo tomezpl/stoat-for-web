@@ -16,6 +16,7 @@ export const DEFAULT_SEQUENCES: Record<KeybindAction, (string | RegExp)[]> = {
   [KeybindAction.CLOSE_MODAL]: ["Escape"],
   [KeybindAction.CLOSE_FLOATING]: ["Escape"],
   [KeybindAction.CLOSE_SIDEBAR]: ["Escape"],
+  [KeybindAction.VOICE_MICROPHONE_MUTE_TOGGLE]: ['PageUp'],
 };
 
 /**

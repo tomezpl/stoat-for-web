@@ -1,12 +1,4 @@
-import {
-  Accessor,
-  JSX,
-  Setter,
-  batch,
-  createContext,
-  createSignal,
-  useContext,
-} from "solid-js";
+import { Accessor, batch, createContext, createSignal, JSX, Setter, useContext } from "solid-js";
 import { RoomContext } from "solid-livekit-components";
 
 import { Room } from "livekit-client";
@@ -20,6 +12,7 @@ import { VoiceCallCardContext } from "@revolt/ui/components/features/voice/callC
 import { CONFIGURATION } from "@revolt/common";
 import { InRoom } from "./components/InRoom";
 import { RoomAudioManager } from "./components/RoomAudioManager";
+import { createKeybind, Keybind, KeybindAction } from "@revolt/keybinds";
 
 type State =
   | "READY"
@@ -213,6 +206,7 @@ export function VoiceContext(props: { children: JSX.Element }) {
         <InRoom>
           <RoomAudioManager />
         </InRoom>
+        <Keybind keybind={KeybindAction.VOICE_MICROPHONE_MUTE_TOGGLE} onPressed={voice.toggleMute.bind(voice)} />
       </RoomContext.Provider>
     </voiceContext.Provider>
   );

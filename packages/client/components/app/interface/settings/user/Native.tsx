@@ -30,6 +30,7 @@ declare global {
       minimise(): void;
       maximise(): void;
       close(): void;
+      onKeyInput(callback: (key: {key: string, vkCode: number}, state: 'up' | 'down') => void): void;
     };
 
     desktopConfig: {
