@@ -34,6 +34,7 @@ import { VoiceCallCardContext } from "@revolt/ui/components/features/voice/callC
 
 import { InRoom } from "./components/InRoom";
 import { RoomAudioManager } from "./components/RoomAudioManager";
+import { createKeybind, Keybind, KeybindAction } from "@revolt/keybinds";
 
 type State =
   | "READY"
@@ -641,6 +642,7 @@ export function VoiceContext(props: { children: JSX.Element }) {
         <InRoom>
           <RoomAudioManager />
         </InRoom>
+        <Keybind keybind={KeybindAction.VOICE_MICROPHONE_MUTE_TOGGLE} onPressed={voice.toggleMute.bind(voice)} />
       </RoomContext.Provider>
     </voiceContext.Provider>
   );

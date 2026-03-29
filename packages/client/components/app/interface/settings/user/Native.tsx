@@ -41,6 +41,7 @@ declare global {
         ) => void,
       ): void;
       screenPickerCallback(idx: number, audio: boolean): void;
+      onKeyInput(callback: (key: {key: string, vkCode: number}, state: 'up' | 'down') => void): void;
     };
 
     desktopConfig: {

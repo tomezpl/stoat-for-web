@@ -132,10 +132,27 @@ export function KeybindContext(props: { children: JSXElement }) {
   document.body.addEventListener("keydown", onKeyDown);
   document.body.addEventListener("keyup", onKeyUp);
 
+  const keybindCallbacks = new Map<KeybindAction, ReadonlyArray<() => void>>();
+
   onCleanup(() => {
     document.body.removeEventListener("keydown", onKeyDown);
     document.body.removeEventListener("keyup", onKeyUp);
+    keybindCallbacks.clear();
   });
+
+  if(window.native?.onKeyInput) {
+    window.native.onKeyInput(({ key, vkCode }, state) => {
+      console.log(`Got native key ${JSON.stringify(key)} with state ${JSON.stringify(state)}`);
+
+      for (const keybind in sequences) {
+        if (sequences[keybind as KeybindAction].some(s => s === key || (typeof s !== 'string' && s?.test(key)))) {
+          for (const callback of keybindCallbacks.get(keybind as KeybindAction) ?? []) {
+            callback();
+          }
+        }
+      }
+    });
+  }
 
   return (
     <keybindContext.Provider
@@ -143,6 +160,16 @@ export function KeybindContext(props: { children: JSXElement }) {
         createKeybind(keybind, callback) {
           currentlyBound[keybind]++;
           onCleanup(() => currentlyBound[keybind]--);
+
+          const otherCbs = keybindCallbacks.get(keybind) ?? [];
+          keybindCallbacks.set(keybind, [...otherCbs, callback]);
+
+          onCleanup(() => {
+            const cbs = keybindCallbacks.get(keybind);
+            if(cbs) {
+              keybindCallbacks.set(keybind, cbs.filter((cb) => cb !== callback));
+            }
+          })
 
           createEffect(() => {
             const _ = [...activeKeys]; // track dependency
