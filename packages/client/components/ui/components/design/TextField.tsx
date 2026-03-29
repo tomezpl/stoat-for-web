@@ -26,6 +26,7 @@ type Props = JSX.HTMLAttributes<HTMLInputElement> & {
     | "previous"
     | "search"
     | "find";
+  readonly?: boolean;
 };
 
 /**

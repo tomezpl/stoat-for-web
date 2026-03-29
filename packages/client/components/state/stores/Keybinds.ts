@@ -8,6 +8,7 @@
 import { State } from "..";
 
 import { AbstractStore } from ".";
+import { KeybindAction } from "@revolt/keybinds";
 
 // /** utility to make writing the default keybinds easier, requires all `KeybindAction` values to be filled out */
 // function keybindMap(
@@ -47,9 +48,11 @@ import { AbstractStore } from ".";
 //   [KeybindAction.DeveloperToggleAllExperiments]: [],
 // });
 
+const KEYBIND_ACTION_KEY_PREFIX = 'keybindAction:' as const;
+
 export type TypeKeybinds = {
   _phantom?: never;
-};
+} & Partial<Record<`${typeof KEYBIND_ACTION_KEY_PREFIX}${KeybindAction}`, KeyboardEvent["key"]>>;
 
 export class Keybinds extends AbstractStore<"keybinds", TypeKeybinds> {
   /**
@@ -78,6 +81,53 @@ export class Keybinds extends AbstractStore<"keybinds", TypeKeybinds> {
    * Validate the given data to see if it is compliant and return a compliant object
    */
   clean(_input: Partial<TypeKeybinds>): TypeKeybinds {
-    return {};
+    const validated: TypeKeybinds = {};
+
+    for(const key in _input) {
+      let valid = false;
+
+      if(key.startsWith(KEYBIND_ACTION_KEY_PREFIX)) {
+        const keybindActionEnumVal = key.slice(KEYBIND_ACTION_KEY_PREFIX.length);
+
+        valid = !!(KeybindAction[keybindActionEnumVal as keyof typeof KeybindAction] && _input[key as keyof TypeKeybinds]);
+      }
+
+      if(valid) {
+        // TS keeps complaining about trying to assign to `validated` so we're having to do it this way...
+        Object.assign(validated, {[key]: _input[key as keyof TypeKeybinds]});
+      }
+    }
+
+    return validated;
+  }
+
+  setKeybind(keybind: KeybindAction, key: KeyboardEvent["key"]) {
+    this.set(`${KEYBIND_ACTION_KEY_PREFIX}${keybind}`, key);
+  }
+
+  clearKeybind(keybind: KeybindAction) {
+    const store = this.get();
+    const key = `${KEYBIND_ACTION_KEY_PREFIX}${keybind}` as const;
+    if(key in store) {
+      this.set(key, undefined);
+    }
+  }
+
+  getKeybind(keybind: KeybindAction): KeyboardEvent["key"] | null {
+    return this.get()[`${KEYBIND_ACTION_KEY_PREFIX}${keybind}`] ?? null;
+  }
+  
+  getAllKeybinds() {
+    const binds: Partial<Record<KeybindAction, KeyboardEvent["key"]>> = {};
+    
+    const current = this.get();
+    
+    for(const key in current) {
+      if(key.startsWith(KEYBIND_ACTION_KEY_PREFIX) && current[key as keyof TypeKeybinds]) {
+        binds[key.slice(KEYBIND_ACTION_KEY_PREFIX.length) as KeybindAction] = current[key as keyof TypeKeybinds];
+      }
+    }
+    
+    return binds;
   }
 }

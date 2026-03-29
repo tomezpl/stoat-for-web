@@ -14,6 +14,7 @@ import {
   keybindFilter,
 } from "./keybindActions";
 import { DEFAULT_MAC_SEQUENCES, DEFAULT_SEQUENCES } from "./keybindSequences";
+import { useState } from "@revolt/state";
 
 type KeybindContext = {
   createKeybind: (keybind: KeybindAction, callback: () => void) => void;
@@ -62,11 +63,11 @@ export function KeybindContext(props: { children: JSXElement }) {
         )
         // check whether the keybind is being pressed
         .filter((keybind) =>
-          sequences[keybind].every((key) =>
+          sequences[keybind]?.every((key) =>
             key instanceof RegExp
               ? [...activeKeys].findIndex((item) => key.test(item)) !== -1
               : activeKeys.has(key),
-          ),
+          ) ?? false,
         )
         // return the highest priority keybind
         .shift()
@@ -93,11 +94,11 @@ export function KeybindContext(props: { children: JSXElement }) {
           .reduce(
             (d, keybind) => ({
               ...d,
-              [keybind]: sequences[keybind].every((key) =>
+              [keybind]: sequences[keybind]?.every((key) =>
                 key instanceof RegExp
                   ? [...activeKeys].findIndex((item) => key.test(item)) !== -1
                   : activeKeys.has(key),
-              ),
+              ) ?? false,
             }),
             {},
           ),
@@ -140,14 +141,19 @@ export function KeybindContext(props: { children: JSXElement }) {
     keybindCallbacks.clear();
   });
 
-  if(window.native?.onKeyInput) {
-    window.native.onKeyInput(({ key, vkCode }, state) => {
-      console.log(`Got native key ${JSON.stringify(key)} with state ${JSON.stringify(state)}`);
+  const state = useState();
 
-      for (const keybind in sequences) {
-        if (sequences[keybind as KeybindAction].some(s => s === key || (typeof s !== 'string' && s?.test(key)))) {
-          for (const callback of keybindCallbacks.get(keybind as KeybindAction) ?? []) {
-            callback();
+  if(window.native?.onKeyInput) {
+    window.native.onKeyInput(({ key, vkCode }, keyState) => {
+      console.log(`Got native key ${JSON.stringify(key)} with state ${JSON.stringify(keyState)}`);
+
+      if(keyState === 'down') {
+        const boundKeys = state.keybinds.getAllKeybinds();
+        for (const keybind in boundKeys) {
+          if (boundKeys[keybind as KeybindAction] === key) {
+            for (const callback of keybindCallbacks.get(keybind as KeybindAction) ?? []) {
+              callback();
+            }
           }
         }
       }
