@@ -3736,3 +3736,7 @@ msgstr "Your role ranking is too low to take this action."
 #: components/i18n/errors.tsx
 msgid "Your user has already been created? Try logging in again or refreshing the app."
 msgstr "Your user has already been created? Try logging in again or refreshing the app."
+
+#: components/app/interface/settings/UserSettings.tsx
+msgid: "Keybinds"
+msgstr: "Key bindings"

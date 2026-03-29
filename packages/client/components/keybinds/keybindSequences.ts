@@ -3,7 +3,7 @@ import { KeybindAction } from "./keybindActions";
 /**
  * Sequences are a set of keys that must be pressed at the same time
  */
-export const DEFAULT_SEQUENCES: Record<KeybindAction, (string | RegExp)[]> = {
+export const DEFAULT_SEQUENCES: Partial<Record<KeybindAction, (string | RegExp)[]>> = {
   [KeybindAction.NAVIGATION_CHANNEL_UP]: ["Alt", "ArrowDown"],
   [KeybindAction.NAVIGATION_CHANNEL_DOWN]: ["Alt", "ArrowDown"],
   [KeybindAction.NAVIGATION_SERVER_UP]: ["Control", "Alt", "ArrowUp"],
@@ -16,14 +16,13 @@ export const DEFAULT_SEQUENCES: Record<KeybindAction, (string | RegExp)[]> = {
   [KeybindAction.CLOSE_MODAL]: ["Escape"],
   [KeybindAction.CLOSE_FLOATING]: ["Escape"],
   [KeybindAction.CLOSE_SIDEBAR]: ["Escape"],
-  [KeybindAction.VOICE_MICROPHONE_MUTE_TOGGLE]: ['PageUp'],
 };
 
 /**
  * Sequences are a set of keys that must be pressed at the same time
  * (macOS version)
  */
-export const DEFAULT_MAC_SEQUENCES: Record<KeybindAction, (string | RegExp)[]> =
+export const DEFAULT_MAC_SEQUENCES: Partial<Record<KeybindAction, (string | RegExp)[]>> =
   {
     [KeybindAction.NAVIGATION_CHANNEL_UP]: ["Alt" /* Command */, "ArrowUp"],
     [KeybindAction.NAVIGATION_CHANNEL_DOWN]: ["Alt" /* Command */, "ArrowDown"],

@@ -26,6 +26,7 @@ import MdScience from "@material-design-icons/svg/outlined/science.svg?component
 import MdSmartToy from "@material-design-icons/svg/outlined/smart_toy.svg?component-solid";
 import MdVerifiedUser from "@material-design-icons/svg/outlined/verified_user.svg?component-solid";
 import MdWorkspacePremium from "@material-design-icons/svg/outlined/workspace_premium.svg?component-solid";
+import MdKeybinds from "@material-design-icons/svg/outlined/keyboard.svg?component-solid";
 
 import pkg from "../../../../../../package.json";
 
@@ -43,6 +44,7 @@ import { EditProfile } from "./user/profile";
 import { Sessions } from "./user/Sessions";
 import { EditSubscription } from "./user/subscriptions";
 import { VoiceSettings } from "./user/voice/VoiceSettings";
+import { KeybindSettings } from "./user/keybinds/KeybindSettings";
 
 const Config: SettingsConfiguration<{ server: Server }> = {
   /**
@@ -100,6 +102,8 @@ const Config: SettingsConfiguration<{ server: Server }> = {
         return <VoiceSettings />;
       case "notifications":
         return <Notifications isDesktop={!!window.native} />;
+      case "keybinds":
+        return <KeybindSettings />;
       default:
         return null;
     }
@@ -298,6 +302,12 @@ const Config: SettingsConfiguration<{ server: Server }> = {
             //   icon: <MdKeybinds {...iconSize(20)} />,
             //   title: t("app.settings.pages.keybinds.title"),
             // },
+            // Only include keybinds in the desktop client, as they rely on a Win32 hook
+            ...(window.native?.versions?.electron?.() ? [{
+              id: "keybinds",
+              icon: <MdKeybinds {...iconSize(20)} />,
+              title: <Trans>Keybinds</Trans>,
+            }] : []),
             {
               id: "language",
               icon: <MdLanguage {...iconSize(20)} />,
