@@ -1,4 +1,4 @@
-import { createEffect, createMemo } from "solid-js";
+import { createEffect, createMemo, createSignal, onCleanup } from "solid-js";
 import { AudioTrack, useTracks } from "solid-livekit-components";
 
 import { getTrackReferenceId, isLocal } from "@livekit/components-core";
@@ -8,6 +8,7 @@ import { RemoteTrackPublication, Track } from "livekit-client";
 import { useState } from "@revolt/state";
 
 import { useVoice } from "../state";
+import joinSound from '../../../test_assets/join_sound.ogg';
 
 export function RoomAudioManager() {
   const voice = useVoice();
@@ -42,8 +43,52 @@ export function RoomAudioManager() {
     }
   });
 
+  const [trackCount, setTrackCount] = createSignal(0);
+  const [canDetectJoin, setCanDetectJoin] = createSignal(false);
+
+  createEffect(() => {
+    let timeout: ReturnType<typeof setTimeout> | undefined;
+
+    if(tracks().length) {
+      timeout = setTimeout(() => {
+        setCanDetectJoin(true);
+        timeout = undefined;
+      }, 500);
+    } else {
+      setCanDetectJoin(false);
+    }
+
+    onCleanup(() => {
+      if(timeout !== undefined) {
+        clearTimeout(timeout);
+        timeout = undefined;
+      }
+    })
+  })
+
+  createEffect(() => {
+    const newTrackCount = filteredTracks().length;
+
+    if(canDetectJoin()) {
+      if(trackCount() < newTrackCount) {
+        console.log('someone joined! track count changed from', trackCount(), 'to', newTrackCount);
+
+        if(joinAudioEl) {
+          joinAudioEl.volume = 0.2;
+          joinAudioEl.play();
+        }
+      }
+    }
+
+    setTrackCount(newTrackCount);
+
+  })
+
+  let joinAudioEl: HTMLAudioElement | undefined;
+
   return (
     <div style={{ display: "none" }}>
+      <audio src={joinSound} autoplay={false} controls={false} preload={'auto'} ref={joinAudioEl} style={{display: 'none'}} />
       <Key each={filteredTracks()} by={(item) => getTrackReferenceId(item)}>
         {(track) => (
           <AudioTrack
