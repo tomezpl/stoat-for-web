@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - feat/keybinds
+      - feat/join-sound
     tags:
       - "v*"
   pull_request:
