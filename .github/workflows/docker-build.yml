@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - fix/missing-desktop-config
     tags:
       - "v*"
   pull_request:
