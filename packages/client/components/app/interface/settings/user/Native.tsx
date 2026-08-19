@@ -45,7 +45,7 @@ declare global {
     };
 
     desktopConfig: {
-      get(): DesktopConfig;
+      get(): DesktopConfig | undefined;
       set(config: Partial<DesktopConfig>): void;
       getAutostart(): Promise<boolean>;
       setAutostart(value: boolean): Promise<boolean>;
@@ -63,7 +63,7 @@ export default function Native() {
 
   function set(config: Partial<DesktopConfig>) {
     window.desktopConfig.set(config);
-    setConfig((conf) => ({ ...conf, ...config }));
+    setConfig((conf) => ({ ...conf, ...(config as DesktopConfig) }));
   }
 
   onMount(async () => {
@@ -80,12 +80,12 @@ export default function Native() {
   const toggles: Partial<Record<keyof DesktopConfig, () => void>> = {
     minimiseToTray: () => set({ minimiseToTray: !config().minimiseToTray }),
     startMinimisedToTray: () =>
-      set({ startMinimisedToTray: !config().startMinimisedToTray }),
-    customFrame: () => set({ customFrame: !config().customFrame }),
-    discordRpc: () => set({ discordRpc: !config().discordRpc }),
-    spellchecker: () => set({ spellchecker: !config().spellchecker }),
+      set({ startMinimisedToTray: !config()?.startMinimisedToTray }),
+    customFrame: () => set({ customFrame: !config()?.customFrame }),
+    discordRpc: () => set({ discordRpc: !config()?.discordRpc }),
+    spellchecker: () => set({ spellchecker: !config()?.spellchecker }),
     hardwareAcceleration: () =>
-      set({ hardwareAcceleration: !config().hardwareAcceleration }),
+      set({ hardwareAcceleration: !config()?.hardwareAcceleration }),
   };
 
   function CheckboxButton<K extends keyof Omit<DesktopConfig, "windowState">>(
@@ -96,7 +96,7 @@ export default function Native() {
   ) {
     return (
       <CategoryButton
-        action={<Checkbox checked={config()[key]} />}
+        action={<Checkbox checked={!!config()?.[key]} />}
         onClick={toggles[key]}
         icon={<Symbol>{icon}</Symbol>}
         description={description}
