@@ -44,7 +44,7 @@ export function Titlebar() {
     <Presence>
       <Show
         when={
-          (isNative && window.desktopConfig?.get().customFrame) ||
+          (isNative && window.desktopConfig?.get()?.customFrame) ||
           isDisconnected()
         }
       >
