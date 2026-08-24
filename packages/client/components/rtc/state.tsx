@@ -446,7 +446,7 @@ class Voice {
         contentHint: "motion",
       };
       const originalResolution = ScreenSharePresets.original.resolution;
-      originalResolution.frameRate = 5;
+      originalResolution.frameRate = 30;
       originalResolution.aspectRatio = 0;
 
       const limit = this.limits().video_resolution;
@@ -461,7 +461,7 @@ class Voice {
       qualities.text = {
         name: "text",
         resolution: originalResolution,
-        fullName: `Source 5FPS`,
+        fullName: `Source ${originalResolution.frameRate}FPS`,
         contentHint: "text",
       };
     }
