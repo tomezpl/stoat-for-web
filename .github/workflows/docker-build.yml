@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - fix/missing-desktop-config
+      - feat/better-screenshare-quality
     tags:
       - "v*"
   pull_request:
