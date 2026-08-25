@@ -446,7 +446,7 @@ class Voice {
         contentHint: "motion",
       };
       const originalResolution = ScreenSharePresets.original.resolution;
-      originalResolution.frameRate = 30;
+      originalResolution.frameRate = 60;
       originalResolution.aspectRatio = 0;
 
       const limit = this.limits().video_resolution;
@@ -462,7 +462,7 @@ class Voice {
         name: "text",
         resolution: originalResolution,
         fullName: `Source ${originalResolution.frameRate}FPS`,
-        contentHint: "text",
+        contentHint: "motion",
       };
     }
 
@@ -514,6 +514,7 @@ class Voice {
         const localTrack = await room.localParticipant.setScreenShareEnabled(
           true,
           {
+            contentHint: "motion",
             resolution:
               this.getEnabledScreenShareQualities()[
                 this.#settings.screenShareQuality || "low"
