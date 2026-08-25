@@ -18,8 +18,8 @@ import {
   LocalTrackPublication,
   Room,
   ScreenSharePresets,
-  Track,
-  VideoResolution,
+  Track, VideoPreset,
+  VideoResolution
 } from "livekit-client";
 import { Channel } from "stoat.js";
 
@@ -446,7 +446,7 @@ class Voice {
         contentHint: "motion",
       };
       const originalResolution = ScreenSharePresets.original.resolution;
-      originalResolution.frameRate = 60;
+      originalResolution.frameRate = 30;
       originalResolution.aspectRatio = 0;
 
       const limit = this.limits().video_resolution;
@@ -525,6 +525,18 @@ class Voice {
               noiseSuppression: false,
               voiceIsolation: false,
               restrictOwnAudio: true,
+            },
+          },
+          {
+            // videoCodec: "vp9",
+            degradationPreference: "balanced",
+            // screenShareSimulcastLayers: [
+            //   new VideoPreset(0, 0, 15_000_000, 30, "high"),
+            // ],
+            screenShareEncoding: {
+              priority: "high",
+              maxFramerate: 30,
+              maxBitrate: 15_000_000,
             },
           },
         );
